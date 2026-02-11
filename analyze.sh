@@ -1,0 +1,19 @@
+#!/bin/bash
+set -e
+
+# Generate prompt silently
+./gen_prompt.sh > /dev/null 2>&1
+
+# Convert prompt to JSON (required by --system-prompt-file)
+python3 - <<EOF > calculator/prompt.json
+import json
+print(json.dumps({"system_prompt": open("calculator/prompt.txt").read()}))
+EOF
+
+# Run Gemma
+bash ./google_gemma-3-4b-it-Q6_K.llamafile \
+  --system-prompt-file calculator/prompt.json \
+  --silent-prompt \
+  --log-disable \
+  --temp 0 \
+| fmt -w 80
