@@ -1,0 +1,7 @@
+1. apt install requires -y tag
+2. update and install are not in the same commands
+3. apt vs apt-get
+
+https://gemini.google.com/share/b790323b8f87
+
+Gemini was able to find the 3 issues mentioned in part4-bugs.md

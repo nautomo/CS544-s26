@@ -1,0 +1,8 @@
+ARG PROJECT=p1
+FROM ${PROJECT}-llm:latest
+
+RUN apt-get update && apt-get install -y git
+
+COPY gen_prompt.sh analyze.sh ./
+
+CMD ["bash", "analyze.sh"]
