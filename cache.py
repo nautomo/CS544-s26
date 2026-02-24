@@ -8,21 +8,53 @@ import os
 app = Flask("p2")
 
 project = os.environ.get("PROJECT", "p2")
-channel = grpc.insecure_channel(f"{project}-java-dataset-1:5000")
-stub = property_pb2_grpc.PropertyLookupStub(channel)
+channel1 = grpc.insecure_channel(f"{project}-java-dataset-1:5000")
+channel2 = grpc.insecure_channel(f"{project}-java-dataset-2:5000")
+stub1 = property_pb2_grpc.PropertyLookupStub(channel1)
+stub2 = property_pb2_grpc.PropertyLookupStub(channel2)
+
+last_used = "2"
 
 @app.route("/parcelnum/<parcel>")
 def parcel_lookup(parcel):
-    source = "1"
+    global last_used
     addrs = []
     error = ""
 
-    response = stub.AddressByParcel(property_pb2.ParcelRequest(parcel=parcel), timeout=1)
-    addrs = list(response.addresses)
-    if response.failed:
-        error = "unknown backend error"
+    if last_used == "2":
+        first_stub = stub1
+        first_source = "1"
+        second_stub = stub2
+        second_source = "2"
+    else:
+        first_stub = stub2
+        first_source = "2"
+        second_stub = stub1
+        second_source = "1"
 
-    return flask.jsonify({"source": source, "addrs": addrs, "error": error})
+    last_used = first_source
+
+    # we get a gRPC response from the server, but the failed flag is True
+    try:
+        response = first_stub.AddressByParcel(property_pb2.ParcelRequest(parcel=parcel), timeout=1)
+        addrs = list(response.addresses)
+        if response.failed:
+            error = "unknown backend error"
+        return flask.jsonify({"source": first_source, "addrs": addrs, "error": error})
+    # the gRPC call produces a gRPC specific exception
+    except grpc.RpcError:
+        try:
+            last_used = second_source
+            response = second_stub.AddressByParcel(property_pb2.ParcelRequest(parcel=parcel), timeout=1)
+            addrs = list(response.addresses)
+            if response.failed:
+                error = "unknown backend error"
+            return flask.jsonify({"source": second_source, "addrs": addrs, "error": error})
+        except grpc.RpcError:
+            return flask.jsonify({"source": second_source, "addrs": [], "error": "grpc error"})
+    # the gRPC call produces a different kind of exception
+    except Exception as error:
+        return flask.jsonify({"source": first_source, "addrs": [], "error": str(error)})
 
 def main():
     app.run("0.0.0.0", port=5000, debug=False, threaded=False)
