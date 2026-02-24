@@ -15,11 +15,23 @@ stub2 = property_pb2_grpc.PropertyLookupStub(channel2)
 
 last_used = "2"
 
+cache = {}
+cache_order = []
+cache_size = 6
+
 @app.route("/parcelnum/<parcel>")
 def parcel_lookup(parcel):
     global last_used
+    global cache
+    global cache_order
     addrs = []
     error = ""
+
+    if parcel in cache:
+        addrs = cache[parcel]
+        cache_order.remove(parcel)
+        cache_order.append(parcel)
+        return flask.jsonify({"source": "cache", "addrs": addrs, "error": ""})
 
     if last_used == "2":
         first_stub = stub1
@@ -40,6 +52,12 @@ def parcel_lookup(parcel):
         addrs = list(response.addresses)
         if response.failed:
             error = "unknown backend error"
+        else:
+            cache[parcel] = addrs
+            cache_order.append(parcel)
+            if len(cache) > cache_size:
+                victim = cache_order.pop(0)
+                cache.pop(victim)
         return flask.jsonify({"source": first_source, "addrs": addrs, "error": error})
     # the gRPC call produces a gRPC specific exception
     except grpc.RpcError:
@@ -49,6 +67,12 @@ def parcel_lookup(parcel):
             addrs = list(response.addresses)
             if response.failed:
                 error = "unknown backend error"
+            else:
+                cache[parcel] = addrs
+                cache_order.append(parcel)
+                if len(cache) > cache_size:
+                    victim = cache_order.pop(0)
+                    cache.pop(victim)
             return flask.jsonify({"source": second_source, "addrs": addrs, "error": error})
         except grpc.RpcError:
             return flask.jsonify({"source": second_source, "addrs": [], "error": "grpc error"})
