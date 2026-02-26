@@ -58,7 +58,7 @@ def parcel_lookup(parcel):
         last_used = first_source
         return flask.jsonify({"source": first_source, "addrs": addrs, "error": error})
     # the gRPC call produces a gRPC specific exception
-    except grpc.RpcError:
+    except grpc.RpcError as e:
         try:
             last_used = second_source
             response = second_stub.AddressByParcel(property_pb2.ParcelRequest(parcel=parcel), timeout=1)
@@ -74,9 +74,12 @@ def parcel_lookup(parcel):
 
             last_used = second_source
             return flask.jsonify({"source": second_source, "addrs": addrs, "error": error})
-        except grpc.RpcError:
+        except grpc.RpcError as e2:
             last_used = second_source
-            return flask.jsonify({"source": second_source, "addrs": [], "error": "grpc error"})
+            error = "grpc error"
+            if e.code() == grpc.StatusCode.DEADLINE_EXCEEDED or e2.code() == grpc.StatusCode.DEADLINE_EXCEEDED:
+                error = "timeout"
+            return flask.jsonify({"source": second_source, "addrs": [], "error": error})
     # the gRPC call produces a different kind of exception
     except Exception as e:
         return flask.jsonify({"source": first_source, "addrs": [], "error": str(e)})
@@ -114,7 +117,7 @@ def zip_lookup(zipcode):
         last_used = first_source
         return flask.jsonify({"source": first_source, "addrs": addrs, "error": error})
     # the gRPC call produces a gRPC specific exception
-    except grpc.RpcError:
+    except grpc.RpcError as e:
         try:
             response = second_stub.AddressByZip(property_pb2.ZipRequest(zip=zipcode), timeout=1)
             addrs = list(response.addresses)
@@ -129,9 +132,12 @@ def zip_lookup(zipcode):
 
             last_used = second_source
             return flask.jsonify({"source": second_source, "addrs": addrs, "error": error})
-        except grpc.RpcError:
+        except grpc.RpcError as e2:
             last_used = second_source
-            return flask.jsonify({"source": second_source, "addrs": [], "error": "grpc error"})
+            error = "grpc error"
+            if e.code() == grpc.StatusCode.DEADLINE_EXCEEDED or e2.code() == grpc.StatusCode.DEADLINE_EXCEEDED:
+                error = "timeout"
+            return flask.jsonify({"source": second_source, "addrs": [], "error": error})
     # the gRPC call produces a different kind of exception
     except Exception as e:
         return flask.jsonify({"source": first_source, "addrs": [], "error": str(e)})
