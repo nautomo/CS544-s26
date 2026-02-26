@@ -87,7 +87,7 @@ public class DatasetServer extends PropertyLookupGrpc.PropertyLookupImplBase {
         DatasetServer service = new DatasetServer("/data/addresses.csv.gz");
         Server server = ServerBuilder.forPort(5000)
                 .addService(service)
-                .executor(java.util.concurrent.Executors.newFixedThreadPool(1))
+                .executor(java.util.concurrent.Executors.newFixedThreadPool(16))
                 .build()
                 .start();
         System.out.println("Server started on port 5000");
