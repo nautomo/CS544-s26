@@ -44,7 +44,7 @@ class DatasetServer(property_pb2_grpc.PropertyLookupServicer):
         return response
 
 def serve():
-    server = grpc.server(futures.ThreadPoolExecutor(max_workers=1))
+    server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     service = DatasetServer("/data/addresses.csv.gz")
     property_pb2_grpc.add_PropertyLookupServicer_to_server(service, server)
     server.add_insecure_port("[::]:5000")
