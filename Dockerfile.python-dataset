@@ -2,7 +2,7 @@ FROM python:3.12
 
 WORKDIR /app
 
-RUN pip install grpcio==1.76.0 grpcio-tools==1.76.0 protobuf==6.33.5 pandas
+RUN pip install grpcio==1.76.0 grpcio-tools==1.76.0 protobuf==6.33.5
 
 COPY property.proto ./
 RUN python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. property.proto

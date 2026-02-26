@@ -8,14 +8,8 @@ import os
 app = Flask("p2")
 
 project = os.environ.get("PROJECT", "p2")
-dataset_impl = os.environ.get("DATASET_IMPLEMENTATION", "JAVA").upper()
-
-if dataset_impl == "PYTHON":
-    channel1 = grpc.insecure_channel(f"{project}-python-dataset-1:5000")
-    channel2 = grpc.insecure_channel(f"{project}-python-dataset-2:5000")
-else:
-    channel1 = grpc.insecure_channel(f"{project}-java-dataset-1:5000")
-    channel2 = grpc.insecure_channel(f"{project}-java-dataset-2:5000")
+channel1 = grpc.insecure_channel(f"{project}-java-dataset-1:5000")
+channel2 = grpc.insecure_channel(f"{project}-java-dataset-2:5000")
 stub1 = property_pb2_grpc.PropertyLookupStub(channel1)
 stub2 = property_pb2_grpc.PropertyLookupStub(channel2)
 
