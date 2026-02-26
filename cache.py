@@ -143,7 +143,7 @@ def zip_lookup(zipcode):
         return flask.jsonify({"source": first_source, "addrs": [], "error": str(e)})
 
 def main():
-    app.run("0.0.0.0", port=5000, debug=False, threaded=False)
+    app.run("0.0.0.0", port=5000, debug=False, threaded=True)
 
 if __name__ == "__main__":
     main()
