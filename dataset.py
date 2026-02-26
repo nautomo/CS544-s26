@@ -26,7 +26,7 @@ class DatasetServer(property_pb2_grpc.PropertyLookupServicer):
     def AddressByParcel(self, request, context):
         parcel = request.parcel
         addresses = self.parcel_index.get(parcel, [])
-        response = property_pb2.AddressResponse(address=addresses)
+        response = property_pb2.AddressResponse(addresses=addresses)
         if not addresses:
             response.error = "no addresses found"
         else:
@@ -36,7 +36,7 @@ class DatasetServer(property_pb2_grpc.PropertyLookupServicer):
     def AddressByZip(self, request, context):
         zip_code = request.zip
         addresses = self.zip_index.get(zip_code, [])
-        response = property_pb2.AddressResponse(address=addresses)
+        response = property_pb2.AddressResponse(addresses=addresses)
         if not addresses:
             response.error = "no addresses found"
         else:
