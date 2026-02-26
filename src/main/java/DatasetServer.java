@@ -3,7 +3,6 @@ import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
 import property.Property.ParcelRequest;
 import property.Property.AddressResponse;
-import property.Property.ZipRequest;
 import property.PropertyLookupGrpc;
 
 import java.io.*;
@@ -13,7 +12,6 @@ import java.util.zip.GZIPInputStream;
 public class DatasetServer extends PropertyLookupGrpc.PropertyLookupImplBase {
     // parcel string -> sorted list of addresses
     private final Map<String, SortedSet<String>> parcelIndex = new HashMap<>();
-    private final Map<String, SortedSet<String>> zipIndex = new HashMap<>();
 
     public DatasetServer(String csvPath) throws IOException {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(
@@ -22,12 +20,11 @@ public class DatasetServer extends PropertyLookupGrpc.PropertyLookupImplBase {
             List<String> headers = Arrays.asList(headerLine.split(","));
             int parcelIdx = headers.indexOf("Parcel");
             int addressIdx = headers.indexOf("Address");
-            int zipIdx = headers.indexOf("Zip");
 
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] fields = line.split(",", -1);
-                if (fields.length <= Math.max(parcelIdx, Math.max(addressIdx, zipIdx))) continue;
+                if (fields.length <= Math.max(parcelIdx, addressIdx)) continue;
 
                 String address = fields[addressIdx];
                 if (address == null || address.isEmpty()) continue;
@@ -36,14 +33,9 @@ public class DatasetServer extends PropertyLookupGrpc.PropertyLookupImplBase {
                 if (parcel != null && !parcel.isEmpty()) {
                     parcelIndex.computeIfAbsent(parcel, k -> new TreeSet<>()).add(address);
                 }
-
-                String zip = fields[zipIdx];
-                if (zip != null && !zip.isEmpty()) {
-                    zipIndex.computeIfAbsent(zip, k -> new TreeSet<>()).add(address);
-                }
             }
         }
-        System.out.println("Loaded " + parcelIndex.size() + " parcels and " + zipIndex.size() + " zips");
+        System.out.println("Loaded " + parcelIndex.size() + " parcels");
     }
 
     @Override
@@ -61,20 +53,6 @@ public class DatasetServer extends PropertyLookupGrpc.PropertyLookupImplBase {
         responseObserver.onCompleted();
     }
 
-    @Override
-    public void addressByZip(ZipRequest request, StreamObserver<AddressResponse> responseObserver) {
-        String zip = request.getZip();
-        SortedSet<String> addrs = zipIndex.getOrDefault(zip, null);
-        AddressResponse.Builder builder = AddressResponse.newBuilder();
-        if (addrs == null || addrs.isEmpty()) {
-            builder.setError("no addresses found");
-        } else {
-            builder.addAllAddresses(addrs);
-        }
-        AddressResponse response = builder.build();
-        responseObserver.onNext(response);
-        responseObserver.onCompleted();
-    }
 
     public static void main(String[] args) throws Exception {
         DatasetServer service = new DatasetServer("/data/addresses.csv.gz");
