@@ -9,7 +9,7 @@ import property_pb2_grpc
 class DatasetServer(property_pb2_grpc.PropertyLookupServicer):
     def __init__(self, csv_path):
         df = pd.read_csv(
-            csv_path, usecols=["Parcel", "Address"], dtype=str, compression="gzip"
+            csv_path, usecols=["Parcel", "Address", "Zip"], dtype=str, compression="gzip"
         )
         df.dropna(inplace=True)
         self.parcel_index = (
@@ -17,12 +17,31 @@ class DatasetServer(property_pb2_grpc.PropertyLookupServicer):
             .apply(lambda addr: sorted(addr.tolist()))
             .to_dict()
         )
+        self.zip_index = (
+            df.groupby("Zip")["Address"]
+            .apply(lambda addr: sorted(addr.tolist()))
+            .to_dict()
+        )
 
-    def addressByParcel(self, request, context):
+    def AddressByParcel(self, request, context):
         parcel = request.parcel
         addresses = self.parcel_index.get(parcel, [])
-        return property_pb2.AddressResponse(address=addresses)
+        response = property_pb2.AddressResponse(address=addresses)
+        if not addresses:
+            response.error = "no addresses found"
+        else:
+            response.error = ""
+        return response
 
+    def AddressByZip(self, request, context):
+        zip_code = request.zip
+        addresses = self.zip_index.get(zip_code, [])
+        response = property_pb2.AddressResponse(address=addresses)
+        if not addresses:
+            response.error = "no addresses found"
+        else:
+            response.error = ""
+        return response
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=1))
