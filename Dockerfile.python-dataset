@@ -11,4 +11,4 @@ COPY addresses.csv.gz /data/addresses.csv.gz
 
 # TODO: copy your dataset.py and set the CMD to run it
 COPY dataset.py ./
-CMD ['python', 'dataset.py']
+CMD ["python", "dataset.py"]

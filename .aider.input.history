@@ -177,3 +177,123 @@
 
 # 2026-02-25 17:46:39.134410
 +n
+
+# 2026-02-25 23:07:42.198005
++add two new features: lookup by zip code and better error messages.  You can decide to write some or all yourself, or use Aider with Gemini 2.5 Pro for this part.
++Lookup By Zip
++
++In addition to the parcelnum endpoint, users should be able to lookup addresses by zipcode, like this:
++
++curl localhost:<PORT>/zip/53706
++
++
++Update the various files as necessary so that this returns all addresses (in the same format as with parcel lookup).  You are not required to implement the advanced functionality of parcelnum (round robin, retry, and caching), though it is nice if you do (the tester should accept with or without these).  You have flexibility regarding what the gRPC communication looks like between the cache and dataset.
++Error Handling
++
++Update AddressResponse in property.proto so that we get rid of failed and add an error string field instead.  The field will be empty (to indicate no error) or provide a message describing the nature of the error.
++Requirements:
++
++dataset.py should return a "no addresses found" error when a lookup matches no addresses; you can choose the specific error message for other scenarios
++be VERY careful when removing and adding fields in a protobuf.  Your cache layer needs to still work with the Java dataset, which will use the old/original version of the protobufs found in property-original.proto (you may not change that one).  Backwards compatibility is tricky.
+
+# 2026-02-25 23:07:57.838945
++y
+
+# 2026-02-25 23:08:10.626528
++n
+
+# 2026-02-25 23:08:12.822501
++y
+
+# 2026-02-25 23:13:38.700171
++n
+
+# 2026-02-25 23:18:55.546432
++current code causes cache to time out. what could be the issue?
+
+# 2026-02-25 23:19:19.488660
++n
+
+# 2026-02-25 23:19:36.894928
++java tests don't time out, python tests do
+
+# 2026-02-25 23:21:37.914177
++n
+
+# 2026-02-25 23:21:47.208662
++to reiterate, In this section, you will add two new features: lookup by zip code and better error messages.  You can decide to write some or all yourself, or use Aider with Gemini 2.5 Pro for this part.
++Lookup By Zip
++
++In addition to the parcelnum endpoint, users should be able to lookup addresses by zipcode, like this:
++
++curl localhost:<PORT>/zip/53706
++
++
++Update the various files as necessary so that this returns all addresses (in the same format as with parcel lookup).  You are not required to implement the advanced functionality of parcelnum (round robin, retry, and caching), though it is nice if you do (the tester should accept with or without these).  You have flexibility regarding what the gRPC communication looks like between the cache and dataset.
++Error Handling
++
++Update AddressResponse in property.proto so that we get rid of failed and add an error string field instead.  The field will be empty (to indicate no error) or provide a message describing the nature of the error.
++Requirements:
++
++dataset.py should return a "no addresses found" error when a lookup matches no addresses; you can choose the specific error message for other scenarios
++be VERY careful when removing and adding fields in a protobuf.  Your cache layer needs to still work with the Java dataset, which will use the old/original version of the protobufs found in property-original.proto (you may not change that one).  Backwards compatibility is tricky.
+
+# 2026-02-25 23:22:00.109700
++y
+
+# 2026-02-25 23:22:05.433464
++n
+
+# 2026-02-25 23:22:08.196015
++y
+
+# 2026-02-25 23:27:31.338011
++n
+
+# 2026-02-25 23:28:58.722578
++cache is still timing out. try rewriting all the parts that will implement the two new features: lookup by zip code and better error message. only show the code, do not commit these changes to the file
+
+# 2026-02-25 23:29:20.625735
++y
+
+# 2026-02-25 23:34:59.620835
++/undo
+
+# 2026-02-25 23:36:35.220540
++pretend anything related to zip doesn't exist in the current code. just meeting the basic requirements previously mentioned, how would you implement it?
+
+# 2026-02-25 23:39:32.565656
++n
+
+# 2026-02-25 23:39:56.479193
++the changes above don't seem to change anything so that a timeout won't happen again
+
+# 2026-02-25 23:41:53.184717
++n
+
+# 2026-02-25 23:42:22.098338
++i don't see how this improves runtime, the cache will still take as long but won't timeout. the built in tests will still fail
+
+# 2026-02-25 23:43:53.562359
++n
+
+# 2026-02-25 23:44:39.085272
++are you certain the issues are not within cache.py, dataset.py, or property.proto?
+
+# 2026-02-25 23:45:42.778089
++n
+
+# 2026-02-25 23:46:34.322213
++/undo
+
+# 2026-02-25 23:46:38.415912
++n
+
+# 2026-02-25 23:46:40.756979
++/undo
+
+# 2026-02-25 23:46:54.912008
++revert changes to DatasetServer.java
+
+# 2026-02-25 23:47:00.115869
++y
