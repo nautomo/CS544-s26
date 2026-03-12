@@ -28,7 +28,7 @@ def worker(start, stop, table, results, hit_stats):
             income = income_col[i].as_py()
 
             # Skip bad rows (invalid tract or income)
-            if not tract or income is None or income <= 0:
+            if not tract or not tract.isdigit() or income is None or income <= 0:
                 continue
 
             # Lookup tract median income via REST server
@@ -136,11 +136,11 @@ def main():
     # Print results per state
     for state in sorted(state_totals):
         under, total = state_totals[state]
-        pct = int((under / total) * 100)
+        pct = int((under * 100) // total)
         print(f"{state}: {pct}% of {total}")
 
     # Print overall cache hit rate
-    hit_rate = int((total_hits / total_lookups) * 100)
+    hit_rate = int((total_hits * 100) // total_lookups)
     print(f"hit rate: {hit_rate}%")
 
 if __name__ == "__main__":
