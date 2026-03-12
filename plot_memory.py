@@ -13,5 +13,6 @@ with open("memory_times.csv") as f:
 plt.plot(cache_sizes, hit_rates, marker="o")
 plt.xlabel("Cache Size (thousands)")
 plt.ylabel("Hit Rate (%)")
+plt.ylim(1, 100)
 plt.title("Cache Size vs. Hit Rate")
 plt.savefig("memory.svg")

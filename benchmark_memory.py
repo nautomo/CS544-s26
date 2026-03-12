@@ -2,7 +2,7 @@ import subprocess
 import csv
 
 cache_sizes = list(range(10_000, 100_001, 10_000)) # CHANGED FOR TESTING, revert to 10k, 20k, ..., 100k
-rows = 300_000 # CHANGED FOR TESTING, revert to 1,000,000 later
+rows = 1_000_000 # CHANGED FOR TESTING, revert to 1,000,000 later
 threads = 4
 input_file = "/data/2021_public_lar.parquet"
 output_csv = "memory_times.csv"
