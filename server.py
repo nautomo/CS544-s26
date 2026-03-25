@@ -19,25 +19,8 @@ class LenderService(lender_pb2_grpc.LenderServicer):
                 conn_str = f"mysql+mysqlconnector://root:{password}@mysql:3306/CS544"
                 engine = create_engine(conn_str)
                 with engine.connect() as conn:
-                    # Connection successful, read data
-                    df = pd.read_sql("SELECT * FROM input", conn)
-                    row_count = len(df)
-
-                    # Write data to HDFS
-                    hdfs_path = '/input/input.parquet'
-                    fs = pa.fs.HadoopFileSystem('nn', 9000)
-                    
-                    fs.create_dir('/input', recursive=True)
-
-                    try:
-                        fs.delete_file(hdfs_path)
-                    except FileNotFoundError:
-                        pass # file didn't exist, which is fine
-
-                    table = pa.Table.from_pandas(df)
-                    pq.write_table(table, hdfs_path, filesystem=fs)
-
-                    return lender_pb2.DbToHdfsResp(row_count=row_count)
+                    # Connection successful
+                    return lender_pb2.DbToHdfsResp(error="connected")
 
             except (OperationalError, KeyError) as e:
                 print(f"Could not connect to MySQL: {e}", file=sys.stderr)
