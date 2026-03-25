@@ -13,7 +13,7 @@ import pyarrow.parquet as pq
 
 class LenderService(lender_pb2_grpc.LenderServicer):
     def DbToHdfs(self, request, context):
-        for i in range(5):
+        for i in range(10):
             try:
                 password = "acid"
                 conn_str = f"mysql+mysqlconnector://root:{password}@mysql:3306/CS544"
@@ -41,7 +41,7 @@ class LenderService(lender_pb2_grpc.LenderServicer):
 
             except (OperationalError, KeyError) as e:
                 print(f"Could not connect to MySQL: {e}", file=sys.stderr)
-                if i < 4:
+                if i < 9:
                     print("Retrying in 5 seconds...", file=sys.stderr)
                     time.sleep(5)
             except Exception as e:
