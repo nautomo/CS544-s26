@@ -12,8 +12,8 @@ class LenderService(lender_pb2_grpc.LenderServicer):
     def DbToHdfs(self, request, context):
         for i in range(5):
             try:
-                password = "acid"
-                conn_str = f"mysql+mysqlconnector://root:{password}@mysql/CS544"
+                password = "abc"
+                conn_str = f"mysql+mysqlconnector://root:{password}@mysql:3306/cs544"
                 engine = create_engine(conn_str)
                 with engine.connect() as conn:
                     # Connection successful, but rest of logic is not implemented
