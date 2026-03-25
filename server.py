@@ -51,10 +51,10 @@ class LenderService(lender_pb2_grpc.LenderServicer):
         return lender_pb2.DbToHdfsResp(error="could not connect to mysql")
 
     def BlockLocations(self, request, context):
-        return lender_pb2.BlockLocationsResp(error="not implemented")
+        return lender_pb2.BlockLocationsResp(block_entries={})
 
     def CalcAvgLoan(self, request, context):
-        return lender_pb2.CalcAvgLoanResp(error="not implemented")
+        return lender_pb2.CalcAvgLoanResp(avg_loan=0, source="create")
 
 print("start server")
 server = grpc.server(futures.ThreadPoolExecutor(max_workers=8))
