@@ -53,7 +53,7 @@ class LenderService(lender_pb2_grpc.LenderServicer):
         # --- Connect to HDFS ---
         try:
             fs = pa.fs.HadoopFileSystem(
-                host="p4-nn-1",
+                host="nn",
                 port=9000,
                 user="root",
                 replication=2,
