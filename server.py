@@ -14,7 +14,6 @@ import subprocess
 
 class LenderService(lender_pb2_grpc.LenderServicer):
     def DbToHdfs(self, request, context):
-        # --- MySQL connection with retries ---
         password = "acid"
         conn_str = f"mysql+mysqlconnector://root:{password}@mysql:3306/CS544"
 
@@ -28,7 +27,6 @@ class LenderService(lender_pb2_grpc.LenderServicer):
                         INNER JOIN loan_types t
                             ON l.loan_type_id = t.id
                         WHERE t.loan_type_name = 'Conventional'
-                        LIMIT 10
                     """
                     df = pd.read_sql(query, conn)
                     row_count = len(df)
@@ -38,7 +36,7 @@ class LenderService(lender_pb2_grpc.LenderServicer):
                     ).strip()
 
                     fs = pa.fs.HadoopFileSystem(
-                        host="nn",                     # IMPORTANT: service name
+                        host="nn",
                         port=9000,
                         user="root",
                         replication=2,                 # required
@@ -63,14 +61,101 @@ class LenderService(lender_pb2_grpc.LenderServicer):
             except Exception as e:
                 traceback.print_exc()
                 return lender_pb2.DbToHdfsResp(error=str(e), row_count=0)
-        
+
         return lender_pb2.DbToHdfsResp(error="Could not connect to MySQL", row_count=0)
 
     def BlockLocations(self, request, context):
-        return lender_pb2.BlockLocationsResp(error="not implemented")
+        try:
+            import requests
+            path = request.path
+
+            url = f"http://nn:9870/webhdfs/v1{path}?op=GETFILEBLOCKLOCATIONS"
+
+            resp = requests.get(url)
+            resp.raise_for_status()
+
+            data = resp.json()
+            block_counts = {}
+
+            for block in data["BlockLocations"]["BlockLocation"]:
+                for node in block["hosts"]:
+                    node_id = node
+
+                    block_counts[node_id] = block_counts.get(node_id, 0) + 1
+
+            return lender_pb2.BlockLocationsResp(
+                error="",
+                block_entries=block_counts
+            )
+
+        except Exception as e:
+            traceback.print_exc()
+            return lender_pb2.BlockLocationsResp(
+                error=str(e),
+                block_entries={}
+            )
 
     def CalcAvgLoan(self, request, context):
-        return lender_pb2.CalcAvgLoanResp(error="not implemented")
+        try:
+            county_code = float(request.county_code)
+
+            fs = pa.fs.HadoopFileSystem(
+                host="nn",
+                port=9000,
+                user="root"
+            )
+
+            fs_write = pa.fs.HadoopFileSystem(
+                host="nn",
+                port=9000,
+                user="root",
+                replication=1
+            )
+
+            partition_path = f"/partitions/{int(county_code)}.parquet"
+            source = "reuse"
+
+            try:
+                table = pq.read_table(
+                    partition_path,
+                    filesystem=fs
+                )
+
+            except FileNotFoundError:
+                source = "create"
+
+                table = pq.read_table(
+                    "/hdma-wi-2021.parquet",
+                    filesystem=fs,
+                    filters=[("county_code", "=", county_code)]
+                )
+
+                pq.write_table(
+                    table,
+                    partition_path,
+                    filesystem=fs_write,
+                    compression="snappy"
+                )
+
+            if table.num_rows == 0:
+                avg = 0
+            else:
+                col = table.column("loan_amount").to_pylist()
+                avg = int(sum(col) / len(col))
+
+            return lender_pb2.CalcAvgLoanResp(
+                avg_loan=avg,
+                source=source,
+                error=""
+            )
+
+        except Exception as e:
+            traceback.print_exc()
+            return lender_pb2.CalcAvgLoanResp(
+                avg_loan=0,
+                source="",
+                error=str(e)
+            )
 
 print("start server")
 server = grpc.server(futures.ThreadPoolExecutor(max_workers=8), options=[("grpc.so_reuseport", 0)])
