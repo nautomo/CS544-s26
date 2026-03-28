@@ -113,17 +113,15 @@ class LenderService(lender_pb2_grpc.LenderServicer):
             )
 
             partition_path = f"/partitions/{int(county_code)}.parquet"
-            source = "reuse"
 
             try:
                 table = pq.read_table(
                     partition_path,
                     filesystem=fs
                 )
+                source = "reuse"
 
             except FileNotFoundError:
-                source = "create"
-
                 table = pq.read_table(
                     "/hdma-wi-2021.parquet",
                     filesystem=fs,
@@ -136,6 +134,22 @@ class LenderService(lender_pb2_grpc.LenderServicer):
                     filesystem=fs_write,
                     compression="snappy"
                 )
+                source = "create"
+
+            except Exception:
+                table = pq.read_table(
+                    "/hdma-wi-2021.parquet",
+                    filesystem=fs,
+                    filters=[("county_code", "=", county_code)]
+                )
+
+                pq.write_table(
+                    table,
+                    partition_path,
+                    filesystem=fs_write,
+                    compression="snappy"
+                )
+                source = "recreate"
 
             if table.num_rows == 0:
                 avg = 0
