@@ -1,9 +1,5 @@
-.vscode/
-.idea/
-.*env/
-venv/
-*venv/
-*.env
-**/__pycache__/
-**/score.json
-**/result.json
+venv/*
+nb/.ipynb_checkpoints/*
+nb/data/*
+nb/metastore_db/*
+nb/derby.log
