@@ -1,10 +1,10 @@
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 
 # Install required packages
 RUN apt-get update && apt-get install -y \
     wget \
     curl \
-    openjdk-11-jdk \
+    openjdk-17-jdk \
     python3-pip \
     net-tools \
     lsof \
@@ -13,20 +13,20 @@ RUN apt-get update && apt-get install -y \
 
 
 # Install Python dependencies
-RUN pip3 install jupyterlab==4.3.5 pandas==2.2.3 pyspark==3.5.7 matplotlib==3.10.1 google-genai==0.2.2
+RUN pip3 install jupyterlab==4.3.5 pandas==2.2.3 pyspark==4.1.1 matplotlib==3.10.1 google-genai==0.2.2 --break-system-packages
 
 # Download and extract Hadoop
-RUN wget https://dlcdn.apache.org/hadoop/common/hadoop-3.4.1/hadoop-3.4.1.tar.gz && \
-    tar -xf hadoop-3.4.1.tar.gz && \
-    rm hadoop-3.4.1.tar.gz
+RUN wget https://dlcdn.apache.org/hadoop/common/hadoop-3.4.3/hadoop-3.4.3.tar.gz && \
+    tar -xf hadoop-3.4.3.tar.gz && \
+    rm hadoop-3.4.3.tar.gz
 
 # Download and extract Spark
-RUN wget https://dlcdn.apache.org/spark/spark-3.5.7/spark-3.5.7-bin-hadoop3.tgz && \
-    tar -xf spark-3.5.7-bin-hadoop3.tgz && \
-    rm spark-3.5.7-bin-hadoop3.tgz
+RUN wget https://dlcdn.apache.org/spark/spark-4.1.1/spark-4.1.1-bin-hadoop3.tgz && \
+    tar -xf spark-4.1.1-bin-hadoop3.tgz && \
+    rm spark-4.1.1-bin-hadoop3.tgz
 
 
 # Set environment variables
-ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
-ENV PATH="${PATH}:/hadoop-3.4.1/bin"
-ENV HADOOP_HOME=/hadoop-3.4.1
+ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+ENV PATH="${PATH}:/hadoop-3.4.3/bin"
+ENV HADOOP_HOME=/hadoop-3.4.3
