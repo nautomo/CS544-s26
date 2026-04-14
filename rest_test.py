@@ -1,3 +1,16 @@
+"""
+Test coverage:
+
+Covered endpoints:
+- POST /<db>/api/companies/<ticker>
+
+Uncovered endpoints:
+- POST /<db>/api/companies/<ticker>/records/<date>
+- GET /<db>/api/companies/<ticker>/records
+- GET /<db>/api/companies/<ticker>/records/<date>
+- GET /<db>/api/companies/<ticker>/records/range
+- GET /<db>/api/companies/<ticker>/records/monthly
+"""
 import requests
 import random
 import string
