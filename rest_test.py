@@ -7,8 +7,6 @@ Covered endpoints:
 - GET /<db>/api/companies/<ticker>/records
 - GET /<db>/api/companies/<ticker>/records/<date>
 - GET /<db>/api/companies/<ticker>/records/range
-
-Uncovered endpoints:
 - GET /<db>/api/companies/<ticker>/records/monthly
 """
 import requests
@@ -119,6 +117,51 @@ def test_get_all_stock_records():
         assert returned_record["date"] == expected_record["date"]
         assert returned_record["high"] == expected_record["high"]
         assert returned_record["low"] == expected_record["low"]
+
+
+def test_get_stock_records_monthly():
+    # use random tickers so tests don't interfere with data from previous runs
+    ticker = random_ticker()
+    company_name = "Monthly Averages Inc."
+    company_sector = "Analytics"
+
+    # Create a company first
+    r = requests.post(f"{BASE}/companies/{ticker}",
+                      json={"name": company_name, "sector": company_sector})
+    assert r.status_code == 201
+
+    # Stock records to be inserted, spanning multiple months
+    all_records = [
+        {"date": "2023-05-10", "high": 500, "low": 490},
+        {"date": "2023-05-20", "high": 510, "low": 505},
+        {"date": "2023-06-15", "high": 520, "low": 515},
+        {"date": "2023-06-25", "high": 530, "low": 525},
+        {"date": "2023-07-05", "high": 540, "low": 535},
+    ]
+
+    # Insert the stock records
+    for record in all_records:
+        r = requests.post(f"{BASE}/companies/{ticker}/records/{record['date']}",
+                          json={"high": record['high'], "low": record['low']})
+        assert r.status_code == 201
+
+    # Manually compute expected monthly averages
+    expected_averages = {
+        "2023-05": round((500 + 510) / 2, 4),
+        "2023-06": round((520 + 530) / 2, 4),
+        "2023-07": round(540 / 1, 4),
+    }
+
+    # Get monthly average records for the ticker
+    r = requests.get(f"{BASE}/companies/{ticker}/records/monthly")
+    assert r.status_code == 200
+
+    data = r.json()
+    assert len(data) == len(expected_averages)
+
+    # The API returns records sorted by month, so we can check them
+    returned_averages = {item['month']: item['avg_high'] for item in data}
+    assert returned_averages == expected_averages
 
 
 def test_get_stock_record_by_date():
