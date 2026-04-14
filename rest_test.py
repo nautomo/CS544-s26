@@ -6,9 +6,9 @@ Covered endpoints:
 - POST /<db>/api/companies/<ticker>/records/<date>
 - GET /<db>/api/companies/<ticker>/records
 - GET /<db>/api/companies/<ticker>/records/<date>
+- GET /<db>/api/companies/<ticker>/records/range
 
 Uncovered endpoints:
-- GET /<db>/api/companies/<ticker>/records/range
 - GET /<db>/api/companies/<ticker>/records/monthly
 """
 import requests
@@ -157,3 +157,56 @@ def test_get_stock_record_by_date():
     assert data["date"] == record1["date"]
     assert data["high"] == record1["high"]
     assert data["low"] == record1["low"]
+
+
+def test_get_stock_records_by_range():
+    # use random tickers so tests don't interfere with data from previous runs
+    ticker = random_ticker()
+    company_name = "Date Range Corp."
+    company_sector = "Time Travel"
+
+    # Create a company first
+    r = requests.post(f"{BASE}/companies/{ticker}",
+                      json={"name": company_name, "sector": company_sector})
+    assert r.status_code == 201
+
+    # Stock records to be inserted
+    all_records = [
+        {"date": "2023-04-01", "high": 400, "low": 390},  # Outside range
+        {"date": "2023-04-02", "high": 410, "low": 405},  # Start of range
+        {"date": "2023-04-03", "high": 420, "low": 415},  # Inside range
+        {"date": "2023-04-04", "high": 418, "low": 412},  # End of range
+        {"date": "2023-04-05", "high": 430, "low": 425},  # Outside range
+    ]
+
+    # Insert the stock records
+    for record in all_records:
+        r = requests.post(f"{BASE}/companies/{ticker}/records/{record['date']}",
+                          json={"high": record['high'], "low": record['low']})
+        assert r.status_code == 201
+
+    # Define the range for the query
+    start_date = "2023-04-02"
+    end_date = "2023-04-04"
+
+    # Get records within the date range
+    r = requests.get(f"{BASE}/companies/{ticker}/records/range",
+                     params={"start": start_date, "end": end_date})
+    assert r.status_code == 200
+
+    data = r.json()
+
+    # Records expected to be in the response
+    expected_records_in_range = [rec for rec in all_records if start_date <= rec['date'] <= end_date]
+
+    assert len(data) == len(expected_records_in_range)
+
+    # The API returns records sorted by date, so we can compare them directly
+    for i, returned_record in enumerate(data):
+        expected_record = expected_records_in_range[i]
+        assert returned_record["ticker"] == ticker
+        assert returned_record["name"] == company_name
+        assert returned_record["sector"] == company_sector
+        assert returned_record["date"] == expected_record["date"]
+        assert returned_record["high"] == expected_record["high"]
+        assert returned_record["low"] == expected_record["low"]
