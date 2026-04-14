@@ -1,0 +1,128 @@
+
+# 2026-04-13 18:20:01.220292
++/add server1.py
+
+# 2026-04-13 18:20:29.292355
++What REST API endpoints does this server expose, and how do they map to the MySQL tables?
++
+
+# 2026-04-13 18:26:07.252475
++/add server1.py
++
+
+# 2026-04-13 18:26:14.102529
++What REST API endpoints does this server expose, and how do they map to the MySQL tables?
++
+
+# 2026-04-13 18:26:50.884438
++How does the /prod vs /test URL prefix determine which database is queried?
++
++
+
+# 2026-04-13 19:12:26.306016
++give a full walkthrough of the flow from request to response
+
+# 2026-04-13 19:12:55.486119
++n
+
+# 2026-04-13 19:47:33.926430
++where and how does the server code decide whether to use the test or production database?
+
+# 2026-04-13 20:14:50.930331
++/add rest_test.py
+
+# 2026-04-13 20:14:56.748129
++/read server1.py
+
+# 2026-04-13 20:15:03.723718
++Which REST endpoints are covered by tests, and which are not?
++
+
+# 2026-04-13 20:19:07.014391
++You can run the tests with "bash run_tests.sh".  Run them now.  Do not change any code unless I tell you to
+
+# 2026-04-13 20:19:26.023212
++y
+
+# 2026-04-13 20:19:26.037592
++/run bash run_tests.sh
+
+# 2026-04-13 20:19:26.037670
++/run bash run_tests.sh
+
+# 2026-04-13 20:20:15.439172
++y
+
+# 2026-04-13 20:29:05.273894
++/add rest_test.py
++
+
+# 2026-04-13 20:29:09.655918
++/read server1.py
++
+
+# 2026-04-13 20:29:15.784085
++Which REST endpoints are covered by tests, and which are not?
++
+
+# 2026-04-13 20:32:54.817280
++Add a test for POST /<db>/api/companies/<ticker>/records/<date>.  It should create a company, then post 2 different dates.  Assert response has correct values.  Then the second date again, to test upsert behavior.
+
+# 2026-04-13 20:41:28.323582
++n
+
+# 2026-04-13 20:41:38.082746
++You can run the tests with "bash run_tests.sh".  Run them now.  Do not change any code unless I tell you to.
+
+# 2026-04-13 20:41:44.677102
++y
+
+# 2026-04-13 20:41:44.712624
++/run bash run_tests.sh
+
+# 2026-04-13 20:41:44.712704
++/run bash run_tests.sh
+
+# 2026-04-13 20:41:59.925037
++y
+
+# 2026-04-13 20:42:07.959321
++/run bash run_test.sh
+
+# 2026-04-13 20:42:35.035581
++y
+
+# 2026-04-13 21:22:53.692485
++Add a test for GET /<db>/api/companies/<ticker>/records. It should create a company, insert multiple stock records for different dates, and call the endpoint. Assert response has the correct number of records returned, each record includes ticker, date, high, low, and company info (name/sector), and the records match what was inserted.
++
+
+# 2026-04-13 21:23:40.738281
++n
+
+# 2026-04-13 21:25:48.439236
++Add a test for GET /<db>/api/companies/<ticker>/records/<date>. It should create a company, insert at least two stock records with different dates, and fetch one specific date. Assert response has the returned record matches exactly the inserted values, and only one record is returned. 
+
+# 2026-04-13 21:26:15.787366
++n
+
+# 2026-04-13 21:27:48.682228
++Add a test for GET /<db>/api/companies/<ticker>/records/range. It should create a company, insert multiple stock records across different dates, and call the endpoint with a start and end date. Assert response returns only records within the range, records outside the range are excluded, and boundary dates (start and end) are included.
++
+
+# 2026-04-13 21:29:53.138131
++n
+
+# 2026-04-13 21:32:28.786788
++Add a test for GET /<db>/api/companies/<ticker>/records/monthly. It should create a company, insert stock records across multiple months, ensure multiple records exist within the same month, and call the endpoint. Assert response has the response group data by month, the average high value per month is computed correctly, and values match manually computed averages.
+
+# 2026-04-13 21:32:58.646562
++y
+
+# 2026-04-13 21:32:58.664484
++/run bash run_test.sh
+
+# 2026-04-13 21:32:58.664577
++/run bash run_test.sh
+
+# 2026-04-13 21:33:31.343690
++y
