@@ -4,9 +4,9 @@ Test coverage:
 Covered endpoints:
 - POST /<db>/api/companies/<ticker>
 - POST /<db>/api/companies/<ticker>/records/<date>
+- GET /<db>/api/companies/<ticker>/records
 
 Uncovered endpoints:
-- GET /<db>/api/companies/<ticker>/records
 - GET /<db>/api/companies/<ticker>/records/<date>
 - GET /<db>/api/companies/<ticker>/records/range
 - GET /<db>/api/companies/<ticker>/records/monthly
@@ -77,3 +77,45 @@ def test_add_stock_records():
     data = r.json()
     assert data["ticker"] == ticker
     assert data["date"] == date2
+
+
+def test_get_all_stock_records():
+    # use random tickers so tests don't interfere with data from previous runs
+    ticker = random_ticker()
+    company_name = "Multi-Record Inc."
+    company_sector = "Data"
+
+    # Create a company first
+    r = requests.post(f"{BASE}/companies/{ticker}",
+                      json={"name": company_name, "sector": company_sector})
+    assert r.status_code == 201
+
+    # Stock records to be inserted, ordered by date
+    records = [
+        {"date": "2023-02-01", "high": 200, "low": 190},
+        {"date": "2023-02-02", "high": 210, "low": 205},
+        {"date": "2023-02-03", "high": 208, "low": 198},
+    ]
+
+    # Insert the stock records
+    for record in records:
+        r = requests.post(f"{BASE}/companies/{ticker}/records/{record['date']}",
+                          json={"high": record['high'], "low": record['low']})
+        assert r.status_code == 201
+
+    # Get all records for the ticker
+    r = requests.get(f"{BASE}/companies/{ticker}/records")
+    assert r.status_code == 200
+
+    data = r.json()
+    assert len(data) == len(records)
+
+    # The API returns records sorted by date, so we can compare them directly
+    for i, returned_record in enumerate(data):
+        expected_record = records[i]
+        assert returned_record["ticker"] == ticker
+        assert returned_record["name"] == company_name
+        assert returned_record["sector"] == company_sector
+        assert returned_record["date"] == expected_record["date"]
+        assert returned_record["high"] == expected_record["high"]
+        assert returned_record["low"] == expected_record["low"]
