@@ -11,7 +11,7 @@ services:
       MYSQL_ROOT_PASSWORD: acid
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-pacid"]
-      interval: 1s
+      interval: 5s
       retries: 60
     deploy:
       resources:
@@ -25,7 +25,7 @@ services:
       dockerfile: Dockerfile.cassandra
     healthcheck:
       test: ["CMD", "nodetool", "status"]
-      interval: 1s
+      interval: 20s
       retries: 120
     deploy:
       replicas: 3
