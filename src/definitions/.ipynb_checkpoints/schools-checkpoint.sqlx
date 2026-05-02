@@ -1,9 +1,11 @@
 config {
-  type: "table",
-  name: "schools"
+  type: "operations",
+  name: "schools",
+  hasOutput: true
 }
 
-SELECT *
-FROM PARQUET(
-  'gs://$cs544-s266/wi-schools-raw.parquet'
-)
+LOAD DATA OVERWRITE `cs544-491017.p8.schools`
+FROM FILES (
+  format = 'PARQUET',
+  uris = ['gs://cs544-s26-bucket/wi-schools-raw.parquet']
+);

@@ -9,7 +9,4 @@ SELECT
   c.county_name
 FROM ${ref("schools")} AS s
 JOIN ${ref("wi_counties")} AS c
-ON ST_WITHIN(
-  ST_GEOGPOINT(s.longitude, s.latitude),
-  c.geometry
-)
+ON ST_CONTAINS(c.county_geom, ST_GEOGPOINT(s.longitude, s.latitude))
