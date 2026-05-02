@@ -1,0 +1,9 @@
+config {
+  type: "table",
+  name: "schools"
+}
+
+SELECT *
+FROM PARQUET(
+  'gs://$cs544-s266/wi-schools-raw.parquet'
+)

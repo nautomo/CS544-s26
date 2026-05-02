@@ -1,0 +1,15 @@
+config {
+  type: "table",
+  name: "wi_county_schools"
+}
+
+SELECT
+  s.*,
+  ST_GEOGPOINT(s.longitude, s.latitude) AS location,
+  c.county_name
+FROM ${ref("schools")} AS s
+JOIN ${ref("wi_counties")} AS c
+ON ST_WITHIN(
+  ST_GEOGPOINT(s.longitude, s.latitude),
+  c.geometry
+)
