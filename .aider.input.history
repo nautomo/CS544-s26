@@ -1,0 +1,299 @@
+
+# 2026-02-24 22:02:17.316791
++n
+
+# 2026-02-24 22:02:51.408095
++/ls
+
+# 2026-02-24 22:02:57.242307
++q
+
+# 2026-02-24 22:04:14.763407
++exit
+
+# 2026-02-24 22:24:28.636541
++n
+
+# 2026-02-24 22:24:38.368482
++/ls
+
+# 2026-02-24 22:24:55.913564
++What are the functions in dataset.java, and what do they do?
+
+# 2026-02-24 22:27:22.548544
++n
+
+# 2026-02-24 22:27:35.142894
++What are the functions in dataset.java, and what do they do?
+
+# 2026-02-24 23:37:44.276474
++n
+
+# 2026-02-24 23:38:08.272043
++What are the functions in dataset.java, and what do they do?
+
+# 2026-02-24 23:42:02.411885
++n
+
+# 2026-02-24 23:42:23.980532
++What are the functions in dataset.java, and what do they do?
+
+# 2026-02-24 23:45:52.413196
++n
+
+# 2026-02-24 23:45:58.645942
++What are the functions in dataset.java, and what do they do?
+
+# 2026-02-24 23:47:36.519312
++n
+
+# 2026-02-24 23:47:39.203737
++Review the Java dataset implementation.  How can it be improved?
+
+# 2026-02-24 23:50:21.545081
++run a command to see the first 5 lines of addresses.csv.gz
+
+# 2026-02-24 23:50:51.523199
++n
+
+# 2026-02-24 23:51:08.200707
++List the column names in the file
++
++
+
+# 2026-02-24 23:51:16.964339
++y
+
+# 2026-02-24 23:51:16.966974
++/run zcat addresses.csv.gz | head -n 5
+
+# 2026-02-24 23:51:16.966999
++/run zcat addresses.csv.gz | head -n 5
+
+# 2026-02-24 23:51:30.610372
++y
+
+# 2026-02-24 23:51:35.652009
++List the column names in the file
+
+# 2026-02-24 23:53:34.194142
++read this example gRPC program: https://git.doit.wisc.edu/cdis/cs/courses/cs544/s26/main/-/raw/main/demos/grpc/lec1/server.py
+
+# 2026-02-24 23:54:00.804489
++y
+
+# 2026-02-24 23:54:03.574107
++n
+
+# 2026-02-24 23:54:27.563974
++generate a dataset.py file with the same behaviour as the Java program, but that uses column names instead of column indexes
+
+# 2026-02-25 00:05:06.829260
++n
+
+# 2026-02-25 00:11:52.530439
++explain each code section
+
+# 2026-02-25 00:33:59.574679
++n
+
+# 2026-02-25 00:39:10.422393
++for the addressByParcel method, is there a possibility that return property_pb2.AddressResponse(address=addresses) can fail due to the input?
+
+# 2026-02-25 17:13:54.194559
++n
+
+# 2026-02-25 17:14:00.448889
++for the addressByParcel method, is there a possibility that return property_pb2.AddressResponse(address=addresses) can fail due to the input?
+
+# 2026-02-25 17:15:54.410661
++n
+
+# 2026-02-25 17:16:26.996737
++read this example gRPC program: https://git.doit.wisc.edu/cdis/cs/courses/cs544/s26/main/-/raw/main/demos/grpc/lec1/server.py
+
+# 2026-02-25 17:16:31.791760
++y
+
+# 2026-02-25 17:16:33.504789
++n
+
+# 2026-02-25 17:18:33.882738
++generate a dataset.py file with the same behaviour as the Java program, but that uses column names instead of column indexes.
+
+# 2026-02-25 17:19:39.505589
++n
+
+# 2026-02-25 17:19:45.608660
++for the addressByParcel method, is there a possibility that return property_pb2.AddressResponse(address=addresses) can fail due to the input?
+
+# 2026-02-25 17:20:57.631552
++can you implement this using pandas?
+
+# 2026-02-25 17:22:29.700166
++n
+
+# 2026-02-25 17:22:36.244502
++y
+
+# 2026-02-25 17:22:36.247314
++/run pip install pandas
+
+# 2026-02-25 17:22:36.247339
++/run pip install pandas
+
+# 2026-02-25 17:22:41.764406
++n
+
+# 2026-02-25 17:22:59.831317
++can you explain each section of code and its purpose?
+
+# 2026-02-25 17:36:06.855427
++can you show the code again
+
+# 2026-02-25 17:37:29.915735
++n
+
+# 2026-02-25 17:37:46.551899
++can you show the full dataset.py code with the new changes integrated?
+
+# 2026-02-25 17:41:56.876661
++n
+
+# 2026-02-25 17:42:10.834485
++fix dataset.py t only have the pandas version pls
+
+# 2026-02-25 17:43:20.419489
++n
+
+# 2026-02-25 17:43:26.477901
++resolve the merge conflict?
+
+# 2026-02-25 17:45:08.418548
++show dataset.py again?
+
+# 2026-02-25 17:45:56.518617
++y
+
+# 2026-02-25 17:46:39.134410
++n
+
+# 2026-02-25 23:07:42.198005
++add two new features: lookup by zip code and better error messages.  You can decide to write some or all yourself, or use Aider with Gemini 2.5 Pro for this part.
++Lookup By Zip
++
++In addition to the parcelnum endpoint, users should be able to lookup addresses by zipcode, like this:
++
++curl localhost:<PORT>/zip/53706
++
++
++Update the various files as necessary so that this returns all addresses (in the same format as with parcel lookup).  You are not required to implement the advanced functionality of parcelnum (round robin, retry, and caching), though it is nice if you do (the tester should accept with or without these).  You have flexibility regarding what the gRPC communication looks like between the cache and dataset.
++Error Handling
++
++Update AddressResponse in property.proto so that we get rid of failed and add an error string field instead.  The field will be empty (to indicate no error) or provide a message describing the nature of the error.
++Requirements:
++
++dataset.py should return a "no addresses found" error when a lookup matches no addresses; you can choose the specific error message for other scenarios
++be VERY careful when removing and adding fields in a protobuf.  Your cache layer needs to still work with the Java dataset, which will use the old/original version of the protobufs found in property-original.proto (you may not change that one).  Backwards compatibility is tricky.
+
+# 2026-02-25 23:07:57.838945
++y
+
+# 2026-02-25 23:08:10.626528
++n
+
+# 2026-02-25 23:08:12.822501
++y
+
+# 2026-02-25 23:13:38.700171
++n
+
+# 2026-02-25 23:18:55.546432
++current code causes cache to time out. what could be the issue?
+
+# 2026-02-25 23:19:19.488660
++n
+
+# 2026-02-25 23:19:36.894928
++java tests don't time out, python tests do
+
+# 2026-02-25 23:21:37.914177
++n
+
+# 2026-02-25 23:21:47.208662
++to reiterate, In this section, you will add two new features: lookup by zip code and better error messages.  You can decide to write some or all yourself, or use Aider with Gemini 2.5 Pro for this part.
++Lookup By Zip
++
++In addition to the parcelnum endpoint, users should be able to lookup addresses by zipcode, like this:
++
++curl localhost:<PORT>/zip/53706
++
++
++Update the various files as necessary so that this returns all addresses (in the same format as with parcel lookup).  You are not required to implement the advanced functionality of parcelnum (round robin, retry, and caching), though it is nice if you do (the tester should accept with or without these).  You have flexibility regarding what the gRPC communication looks like between the cache and dataset.
++Error Handling
++
++Update AddressResponse in property.proto so that we get rid of failed and add an error string field instead.  The field will be empty (to indicate no error) or provide a message describing the nature of the error.
++Requirements:
++
++dataset.py should return a "no addresses found" error when a lookup matches no addresses; you can choose the specific error message for other scenarios
++be VERY careful when removing and adding fields in a protobuf.  Your cache layer needs to still work with the Java dataset, which will use the old/original version of the protobufs found in property-original.proto (you may not change that one).  Backwards compatibility is tricky.
+
+# 2026-02-25 23:22:00.109700
++y
+
+# 2026-02-25 23:22:05.433464
++n
+
+# 2026-02-25 23:22:08.196015
++y
+
+# 2026-02-25 23:27:31.338011
++n
+
+# 2026-02-25 23:28:58.722578
++cache is still timing out. try rewriting all the parts that will implement the two new features: lookup by zip code and better error message. only show the code, do not commit these changes to the file
+
+# 2026-02-25 23:29:20.625735
++y
+
+# 2026-02-25 23:34:59.620835
++/undo
+
+# 2026-02-25 23:36:35.220540
++pretend anything related to zip doesn't exist in the current code. just meeting the basic requirements previously mentioned, how would you implement it?
+
+# 2026-02-25 23:39:32.565656
++n
+
+# 2026-02-25 23:39:56.479193
++the changes above don't seem to change anything so that a timeout won't happen again
+
+# 2026-02-25 23:41:53.184717
++n
+
+# 2026-02-25 23:42:22.098338
++i don't see how this improves runtime, the cache will still take as long but won't timeout. the built in tests will still fail
+
+# 2026-02-25 23:43:53.562359
++n
+
+# 2026-02-25 23:44:39.085272
++are you certain the issues are not within cache.py, dataset.py, or property.proto?
+
+# 2026-02-25 23:45:42.778089
++n
+
+# 2026-02-25 23:46:34.322213
++/undo
+
+# 2026-02-25 23:46:38.415912
++n
+
+# 2026-02-25 23:46:40.756979
++/undo
+
+# 2026-02-25 23:46:54.912008
++revert changes to DatasetServer.java
+
+# 2026-02-25 23:47:00.115869
++y
