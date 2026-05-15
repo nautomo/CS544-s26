@@ -1,0 +1,8 @@
+config {
+  type: "table",
+  name: "wi_counties"
+}
+
+SELECT *
+FROM `bigquery-public-data.geo_us_boundaries.counties`
+WHERE state_fips_code = '55'

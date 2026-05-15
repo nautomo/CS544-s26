@@ -1,0 +1,11 @@
+config {
+  type: "operations",
+  name: "schools",
+  hasOutput: true
+}
+
+LOAD DATA OVERWRITE `cs544-491017.p8.schools`
+FROM FILES (
+  format = 'PARQUET',
+  uris = ['gs://cs544-s26-bucket/wi-schools-raw.parquet']
+);
