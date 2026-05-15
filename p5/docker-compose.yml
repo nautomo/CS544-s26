@@ -1,0 +1,65 @@
+name: ${PROJECT}
+
+services:
+    nb:
+        build:
+            context: .
+            dockerfile: notebook.Dockerfile
+        image: ${PROJECT}-nb
+        ports:
+            - "127.0.0.1:5000:5000"
+            - "127.0.0.1:4040:4040"
+        volumes:
+            - "./nb:/nb"
+            - "${HOME}/.config/gcloud:/root/.config/gcloud:ro"
+        environment:
+            - GOOGLE_CLOUD_PROJECT=${GOOGLE_CLOUD_PROJECT}
+        deploy:
+            resources:
+                limits:
+                    memory: 1.5G
+
+    nn:
+        build:
+            context: .
+            dockerfile: namenode.Dockerfile
+        image: ${PROJECT}-nn
+        hostname: nn
+        deploy:
+            resources:
+                limits:
+                    memory: 1G
+
+    dn:
+        build:
+            context: .
+            dockerfile: datanode.Dockerfile
+        image: ${PROJECT}-dn
+        depends_on:
+            - nn
+        deploy:
+            resources:
+                limits:
+                    memory: 1G
+
+    spark-boss:
+        build:
+            context: .
+            dockerfile: boss.Dockerfile
+        image: ${PROJECT}-boss
+        hostname: boss
+        deploy:
+            resources:
+                limits:
+                    memory: 0.5G
+
+    spark-worker:
+        build:
+            context: .
+            dockerfile: worker.Dockerfile
+        image: ${PROJECT}-worker
+        deploy:
+            replicas: 2
+            resources:
+                limits:
+                    memory: 2G

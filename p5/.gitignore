@@ -1,0 +1,5 @@
+venv/*
+nb/.ipynb_checkpoints/*
+nb/data/*
+nb/metastore_db/*
+nb/derby.log
